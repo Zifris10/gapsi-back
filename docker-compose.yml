@@ -1,0 +1,54 @@
+version: '3.8'
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: gapsi/api:1.0.0
+    ports:
+      - 4040:4040
+    depends_on:
+      - postgres
+    volumes:
+      - ./src:/usr/local/gapsi/dev/src
+    networks:
+      - gapsi-compose-network
+    restart: always
+
+  postgres:
+    image: postgres
+    ports:
+      - 5433:5433
+    volumes:
+      - data:/data/db
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+    networks:
+      - gapsi-compose-network
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:6
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - 5050:80
+    volumes:
+       - pgadmin:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - gapsi-compose-network
+    restart: unless-stopped
+
+networks: 
+  gapsi-compose-network:
+    driver: bridge
+
+volumes: 
+  data: {}
+  pgadmin:

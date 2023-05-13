@@ -1,6 +1,7 @@
-*.log
+logs/
 node_modules/
+test/
 build/
 package-lock.json
-.DS_Store
-logs/
+.git
+.gitignore
